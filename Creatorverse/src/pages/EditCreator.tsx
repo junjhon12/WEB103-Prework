@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { supabase } from '../client';
 
 export default function EditCreator() {
+    // 1. Get the ID of the creator we are trying to edit from the URL
     const { id } = useParams();
-    const navigate = useNavigate();
 
+    // 2. Set up state variables for the form inputs
     const [name, setName] = useState('');
     const [url, setUrl] = useState('');
     const [description, setDescription] = useState('');
     const [imageURL, setImageURL] = useState('');
 
+    // 3. Fetch the creator's current data when the page loads
     useEffect(() => {
         const fetchCreator = async () => {
             const { data, error } = await supabase
@@ -22,6 +24,7 @@ export default function EditCreator() {
             if (error) {
                 console.error(error);
             } else if (data) {
+                // Pre-fill the form inputs with the data we got from the database
                 setName(data.name);
                 setUrl(data.url);
                 setDescription(data.description);
@@ -29,11 +32,13 @@ export default function EditCreator() {
             }
         }
         fetchCreator();
-    }, [id]);
+    }, [id]); // Re-run if the ID in the URL changes
 
+    // 4. Handle the form submission (UPDATE)
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Use the .update() method and ensure we filter by the specific ID
         const { error } = await supabase
             .from('creators')
             .update({ 
@@ -48,16 +53,20 @@ export default function EditCreator() {
             console.error('Error updating creator:', error);
         } else {
             console.log('Successfully updated the creator!');
-            navigate('/'); 
+            // Hard refresh the page so the updated list is fetched
+            window.location.href = '/'; 
         }
     }
 
-    // Handle the deletion (DELETE)
+    // 5. Handle the deletion (DELETE)
     const handleDelete = async () => {
+        // Ask the user for confirmation before proceeding
         const isConfirmed = window.confirm("Are you sure you want to delete this creator from the Creatorverse? This cannot be undone.");
         
+        // If they click cancel, stop the function
         if (!isConfirmed) return;
 
+        // Use the .delete() method and filter by the specific ID
         const { error } = await supabase
             .from('creators')
             .delete()
@@ -67,16 +76,19 @@ export default function EditCreator() {
             console.error('Error deleting creator:', error);
         } else {
             console.log('Successfully deleted the creator!');
-            navigate('/'); 
+            // Hard refresh the page so the updated list is fetched
+            window.location.href = '/'; 
         }
     }
 
-    // Build the UI
+    // 6. Build the UI
     return (
         <div className="p-8 max-w-lg mx-auto">
             <h2 className="text-2xl font-bold mb-6">Edit Creator</h2>
             
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                
+                {/* Form Field: Name */}
                 <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
                     <input 
@@ -85,9 +97,11 @@ export default function EditCreator() {
                         value={name} 
                         onChange={(e) => setName(e.target.value)}
                         className="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                        required
                     />
                 </div>
 
+                {/* Form Field: URL */}
                 <div>
                     <label htmlFor="url" className="block text-sm font-medium text-gray-700">URL</label>
                     <input 
@@ -96,9 +110,11 @@ export default function EditCreator() {
                         value={url} 
                         onChange={(e) => setUrl(e.target.value)}
                         className="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                        required
                     />
                 </div>
 
+                {/* Form Field: Description */}
                 <div>
                     <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
                     <textarea 
@@ -107,9 +123,11 @@ export default function EditCreator() {
                         onChange={(e) => setDescription(e.target.value)}
                         className="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
                         rows={4}
+                        required
                     />
                 </div>
 
+                {/* Form Field: Image URL */}
                 <div>
                     <label htmlFor="imageURL" className="block text-sm font-medium text-gray-700">Image URL (Optional)</label>
                     <input 
@@ -121,14 +139,15 @@ export default function EditCreator() {
                     />
                 </div>
 
-                {/* The Update and Delete Buttons */}
+                {/* Action Buttons */}
                 <div className="flex gap-4 mt-4">
-                    <button type="submit" className="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors">
+                    {/* This button triggers the form's onSubmit event */}
+                    <button type="submit" className="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors font-semibold">
                         Update Creator
                     </button>
                     
-                    {/* Notice type="button" and onClick={handleDelete} */}
-                    <button type="button" onClick={handleDelete} className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 transition-colors">
+                    {/* This button explicitly calls the handleDelete function. type="button" prevents it from submitting the form */}
+                    <button type="button" onClick={handleDelete} className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 transition-colors font-semibold">
                         Delete Creator
                     </button>
                 </div>

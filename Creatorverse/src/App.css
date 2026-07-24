@@ -1,1 +1,45 @@
-@import "tailwindcss";
+.creator-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.creator-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  max-width: 28rem;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.creator-card:hover {
+  transform: translateY(-4px);
+}
+
+.creator-card img,
+.creator-card .no-pic {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.creator-card .no-pic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pico-muted-border-color);
+  color: var(--pico-muted-color);
+  font-size: 0.85rem;
+}
+
+.creator-card p {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

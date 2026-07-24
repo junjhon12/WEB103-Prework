@@ -41,11 +41,11 @@ export default function EditCreator() {
         // Use the .update() method and ensure we filter by the specific ID
         const { error } = await supabase
             .from('creators')
-            .update({ 
-                name: name, 
-                url: url, 
-                description: description, 
-                imageURL: imageURL 
+            .update({
+                name: name,
+                url: url,
+                description: description,
+                imageURL: imageURL
             })
             .eq('id', id);
 
@@ -54,7 +54,7 @@ export default function EditCreator() {
         } else {
             console.log('Successfully updated the creator!');
             // Hard refresh the page so the updated list is fetched
-            window.location.href = '/'; 
+            window.location.href = '/';
         }
     }
 
@@ -62,7 +62,7 @@ export default function EditCreator() {
     const handleDelete = async () => {
         // Ask the user for confirmation before proceeding
         const isConfirmed = window.confirm("Are you sure you want to delete this creator from the Creatorverse? This cannot be undone.");
-        
+
         // If they click cancel, stop the function
         if (!isConfirmed) return;
 
@@ -70,88 +70,84 @@ export default function EditCreator() {
         const { error } = await supabase
             .from('creators')
             .delete()
-            .eq('id', id); 
+            .eq('id', id);
 
         if (error) {
             console.error('Error deleting creator:', error);
         } else {
             console.log('Successfully deleted the creator!');
             // Hard refresh the page so the updated list is fetched
-            window.location.href = '/'; 
+            window.location.href = '/';
         }
     }
 
     // 6. Build the UI
     return (
-        <div className="p-8 max-w-lg mx-auto">
-            <h2 className="text-2xl font-bold mb-6">Edit Creator</h2>
-            
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                
+        <main className="container">
+            <h2>Edit Creator</h2>
+
+            <form onSubmit={handleSubmit}>
+
                 {/* Form Field: Name */}
-                <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-                    <input 
-                        type="text" 
+                <label htmlFor="name">
+                    Name
+                    <input
+                        type="text"
                         id="name"
-                        value={name} 
+                        value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
                         required
                     />
-                </div>
+                </label>
 
                 {/* Form Field: URL */}
-                <div>
-                    <label htmlFor="url" className="block text-sm font-medium text-gray-700">URL</label>
-                    <input 
-                        type="url" 
+                <label htmlFor="url">
+                    URL
+                    <input
+                        type="url"
                         id="url"
-                        value={url} 
+                        value={url}
                         onChange={(e) => setUrl(e.target.value)}
-                        className="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
                         required
                     />
-                </div>
+                </label>
 
                 {/* Form Field: Description */}
-                <div>
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
-                    <textarea 
+                <label htmlFor="description">
+                    Description
+                    <textarea
                         id="description"
-                        value={description} 
+                        value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        className="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
                         rows={4}
                         required
                     />
-                </div>
+                </label>
 
                 {/* Form Field: Image URL */}
-                <div>
-                    <label htmlFor="imageURL" className="block text-sm font-medium text-gray-700">Image URL (Optional)</label>
-                    <input 
-                        type="url" 
+                <label htmlFor="imageURL">
+                    Image URL (Optional)
+                    <input
+                        type="url"
                         id="imageURL"
-                        value={imageURL} 
+                        value={imageURL}
                         onChange={(e) => setImageURL(e.target.value)}
-                        className="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
                     />
-                </div>
+                </label>
 
                 {/* Action Buttons */}
-                <div className="flex gap-4 mt-4">
+                <div className="grid">
                     {/* This button triggers the form's onSubmit event */}
-                    <button type="submit" className="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors font-semibold">
+                    <button type="submit">
                         Update Creator
                     </button>
-                    
+
                     {/* This button explicitly calls the handleDelete function. type="button" prevents it from submitting the form */}
-                    <button type="button" onClick={handleDelete} className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 transition-colors font-semibold">
+                    <button type="button" onClick={handleDelete} className="secondary">
                         Delete Creator
                     </button>
                 </div>
             </form>
-        </div>
+        </main>
     );
 }
